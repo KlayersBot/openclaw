@@ -30,10 +30,11 @@ Build a resilient, automated pipeline that pulls your recent chess games from th
   - Highlight the most recent move using the `arrows` or `squares` parameters.
 
 ## Phase 3: Commentary Engine
-*Hybrid Approach:*
-- **Algorithmic Baseline:** Hook `python-chess` to a local Stockfish binary. Calculate the centipawn evaluation difference between moves. Classify moves (Blunder, Mistake, Inaccuracy, Excellent, Best).
-- **LLM Narrative:** Feed the PGN subset and Stockfish evaluations to an LLM (e.g., Gemini/Claude). Ask the LLM to write snarky, human-like commentary specifically roasting blunders or praising brilliancies. 
-- **Hygiene:** Set strict timeout limits on the Stockfish evaluation (e.g., 0.1 seconds per move) to prevent the pipeline from hanging on long games.
+*Hybrid Approach with Tactical Focus:*
+- **Algorithmic Baseline (Stockfish):** Hook `python-chess` to a local Stockfish binary. Calculate the centipawn evaluation difference between moves. Classify moves (Blunder, Mistake, Inaccuracy, Excellent, Best).
+- **Tactical Detection:** Use the engine to identify specific tactical motifs. Compare the player's move against the engine's top line to detect *missed tactics* (e.g., missed forced sequences, ignored hanging pieces) and *executed tactics* (e.g., successful forks, pins, skewers, discovered attacks).
+- **LLM Narrative:** Feed the PGN subset, Stockfish evaluations, and identified tactical motifs to an LLM (e.g., Gemini/Claude). Prompt the LLM to focus the narrative explicitly on these tactics—praising a well-executed skewer or ruthlessly pointing out a missed mate-in-3 or ignored hanging queen.
+- **Hygiene:** Set strict timeout limits on the Stockfish evaluation (e.g., 0.1 seconds per move) to prevent the pipeline from hanging on long games. Filter the LLM prompts so it only comments on pivotal tactical moments, skipping quiet positional maneuvers.
 
 ## Phase 4: Assembly & Output
 - **Markdown Report Generator:** Stitch the generated images and the commentary text into a chronological Markdown file.
